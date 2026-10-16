@@ -463,12 +463,9 @@ if (!idea) {
 
 const details = modeDetails[currentMode];
 const originalLabel = details.action;
-
 if (generateButton) {
-    generateButton.disabled = true;
-    generateButton.textContent = "MIRAGE is thinking...";
+generateButton.addEventListener("click", developIdea);
 }
-
 resultArea.hidden = false;
 resultContent.textContent = "Connecting to MIRAGE AI...";
 
