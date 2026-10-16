@@ -80,19 +80,25 @@ exports.handler = async (event) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error(
-        "OpenAI API error:",
-        data.error ? data.error.message : response.status
-      );
+    const apiError = data.error || {};
 
-      return {
+    console.error("OpenAI API error:", {
+        status: response.status,
+        type: apiError.type,
+        code: apiError.code,
+        message: apiError.message
+    });
+
+    return {
         statusCode: 502,
         headers,
         body: JSON.stringify({
-          error: "The AI service could not complete the request. Check API access, billing, and usage limits."
+            error: apiError.message ||
+                "The AI request failed. Check your API settings.",
+            code: apiError.code || "unknown_error"
         })
-      };
-    }
+    };
+}
 
     const answer = (data.output || [])
       .filter(item => item.type === "message")
