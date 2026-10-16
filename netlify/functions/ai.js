@@ -2,7 +2,7 @@ exports.handler = async (event) => {
   const headers = {
     "Content-Type": "application/json"
   };
-  
+
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -12,10 +12,12 @@ exports.handler = async (event) => {
       })
     };
   }
-  
+
   try {
-    const { prompt, mode } = JSON.parse(event.body || "{}");
-    
+    const body = JSON.parse(event.body || "{}");
+    const prompt = body.prompt;
+    const mode = body.mode || "imagine";
+
     if (!prompt || typeof prompt !== "string") {
       return {
         statusCode: 400,
@@ -25,96 +27,97 @@ exports.handler = async (event) => {
         })
       };
     }
-    
+
     if (prompt.length > 4000) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({
-          error: "Your prompt is too long. Keep it under 4,000 characters."
+          error: "Keep your prompt under 4,000 characters."
         })
       };
     }
-    
+
     const modes = {
       imagine: "You are MIRAGE Imagine, a creative idea assistant.",
       intelligence: "You are MIRAGE Intelligence, a helpful reasoning assistant.",
       world: "You are MIRAGE World Studio, an imaginative world-building assistant.",
       invention: "You are MIRAGE Invention Lab, an invention and problem-solving assistant."
     };
-    
+
     const instructions =
-      modes[mode] ||
-      "You are MIRAGE, a helpful, creative AI assistant.";
-    
+      modes[mode] || "You are MIRAGE, a helpful creative AI assistant.";
+
     const apiKey = process.env.OPENAI_API_KEY;
-    
+
     if (!apiKey) {
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({
-          error: "The AI service is not configured in Netlify."
+          error: "OPENAI_API_KEY is missing from Netlify environment variables."
         })
       };
     }
-    
+
     const response = await fetch(
       "https://api.openai.com/v1/responses",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
+          "Authorization": "Bearer " + apiKey
         },
         body: JSON.stringify({
-          model: "gpt-5.5",
-          instructions,
+          model: "gpt-5",
+          instructions: instructions,
           input: prompt,
           max_output_tokens: 800
         })
       }
     );
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
-      console.error("OpenAI request failed:", data.error?.message);
-      
+      console.error(
+        "OpenAI API error:",
+        data.error ? data.error.message : response.status
+      );
+
       return {
-        statusCode: response.status === 429 ? 429 : 502,
+        statusCode: 502,
         headers,
         body: JSON.stringify({
-          error: response.status === 429 ?
-            "The AI request limit or available quota has been reached. Check your API usage and billing." :
-            "The AI service could not complete your request. Check your API settings."
+          error: "The AI service could not complete the request. Check API access, billing, and usage limits."
         })
       };
     }
-    
+
     const answer = (data.output || [])
       .filter(item => item.type === "message")
       .flatMap(item => item.content || [])
       .filter(item => item.type === "output_text")
       .map(item => item.text)
       .join("\n");
-    
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        answer: answer || "I couldn't generate a response. Please try again."
+        answer: answer || "Please try another prompt."
       })
     };
-    
+
   } catch (error) {
     console.error("MIRAGE function error:", error.message);
-    
+
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
-        error: "Something went wrong. Please try again."
+        error: "Something went wrong while processing your request."
       })
     };
   }
+};
