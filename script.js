@@ -1,9 +1,8 @@
 "use strict";
 
 /* ==========================================
-   PROJECT MIRAGE — VERSION 1
-   Front-end creative workspace
-   No AI API is connected in this version.
+   PROJECT MIRAGE — AI-POWERED WORKSPACE
+   Connected to Netlify AI Function
 ========================================== */
 
 const ideaInput = document.getElementById("ideaInput");
@@ -42,25 +41,29 @@ let isListening = false;
 const modeDetails = {
     imagine: {
         label: "IMAGINATION MODE",
-        placeholder: "Describe something you want to imagine, design, or create...",
+        placeholder:
+            "Describe something you want to imagine, design, or create...",
         action: "Develop Idea ✦"
     },
 
     intelligence: {
         label: "INTELLIGENCE MODE",
-        placeholder: "Describe a question, challenge, or problem you want to explore...",
+        placeholder:
+            "Describe a question, challenge, or problem you want to explore...",
         action: "Explore Idea ✦"
     },
 
     worlds: {
         label: "WORLD STUDIO MODE",
-        placeholder: "Describe your imaginary world, its environment, people, and technology...",
+        placeholder:
+            "Describe your imaginary world, its environment, people, and technology...",
         action: "Design World ✦"
     },
 
     invention: {
         label: "INVENTION LAB MODE",
-        placeholder: "Describe a problem you want to solve or an invention you want to develop...",
+        placeholder:
+            "Describe a problem you want to solve or an invention you want to develop...",
         action: "Develop Invention ✦"
     }
 };
@@ -84,24 +87,6 @@ function showToast(message) {
         toast.classList.remove("visible");
     }, 2800);
 }
-
-/* Safely display user-provided text in HTML */
-
-function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, function (character) {
-        const entities = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        };
-
-        return entities[character];
-    });
-}
-
-/* Scroll to a page section */
 
 function scrollToSection(id) {
     const section = document.getElementById(id);
@@ -149,16 +134,10 @@ function selectMode(mode) {
             : "";
     });
 
-    scrollToSection("workspace");
-
     if (ideaInput) {
-        setTimeout(function () {
-            ideaInput.focus({ preventScroll: true });
-        }, 350);
+        ideaInput.focus({ preventScroll: true });
     }
 }
-
-/* Connect creative mode cards */
 
 document.querySelectorAll(".mode-card").forEach(function (card) {
     card.addEventListener("click", function () {
@@ -215,7 +194,7 @@ if (menuButton && mobileMenu) {
 }
 
 /* ==========================================
-   IMAGE UPLOAD
+   IMAGE UPLOAD AND PREVIEW
 ========================================== */
 
 if (uploadButton && imageInput) {
@@ -264,12 +243,14 @@ if (uploadButton && imageInput) {
         }
 
         showToast(
-            "Image selected. AI image understanding is not connected yet."
+            "Image selected. Image understanding is not connected yet."
         );
     });
 }
 
-/* Remove selected image */
+/* ==========================================
+   REMOVE SELECTED IMAGE
+========================================== */
 
 if (removeImageButton) {
     removeImageButton.addEventListener("click", function () {
@@ -301,268 +282,134 @@ if (removeImageButton) {
 }
 
 /* ==========================================
-   IMAGINATION MODE TEMPLATE
+   REAL AI GENERATION
 ========================================== */
-
-function makeImagineResult(idea) {
-    return `
-        <h3>✨ Your Creative Concept</h3>
-
-        <p><strong>Your idea:</strong> ${escapeHTML(idea)}</p>
-
-        <h3>1. Core Vision</h3>
-        <p>Define what makes this idea interesting, what experience it
-        should create, and what you want people to discover.</p>
-
-        <h3>2. Design Direction</h3>
-        <ul>
-            <li>Choose the main features and visual style.</li>
-            <li>Decide who the creation is for.</li>
-            <li>Describe how someone would interact with it.</li>
-        </ul>
-
-        <h3>3. First Prototype</h3>
-        <p>Start with a small version that demonstrates the central idea.
-        Improve it after testing and collecting feedback.</p>
-
-        <h3>4. Next Step</h3>
-        <p>Write down three specific features that would make your concept
-        useful, interesting, or different.</p>
-    `;
-}
-
-/* ==========================================
-   INTELLIGENCE MODE TEMPLATE
-========================================== */
-
-function makeIntelligenceResult(idea) {
-    return `
-        <h3>🧠 Problem-Solving Workspace</h3>
-
-        <p><strong>Question or challenge:</strong> ${escapeHTML(idea)}</p>
-
-        <h3>1. Understand the Problem</h3>
-        <p>Describe the issue clearly. Identify who experiences it,
-        when it happens, and why it matters.</p>
-
-        <h3>2. Explore Possible Solutions</h3>
-        <ul>
-            <li>Consider a simple solution that can be tested quickly.</li>
-            <li>Consider a technology-assisted solution.</li>
-            <li>Compare the costs, benefits, and limitations of each idea.</li>
-        </ul>
-
-        <h3>3. Test Your Thinking</h3>
-        <p>Look for evidence, check assumptions, and ask someone affected
-        by the problem for feedback.</p>
-
-        <h3>4. Action Plan</h3>
-        <p>Choose one small experiment and define how you will know
-        whether it works.</p>
-    `;
-}
-
-/* ==========================================
-   WORLD STUDIO MODE TEMPLATE
-========================================== */
-
-function makeWorldResult(idea) {
-    return `
-        <h3>🌍 World Studio Blueprint</h3>
-
-        <p><strong>World concept:</strong> ${escapeHTML(idea)}</p>
-
-        <h3>1. Environment</h3>
-        <p>Define the landscape, climate, buildings, natural resources,
-        and distinctive locations.</p>
-
-        <h3>2. Inhabitants</h3>
-        <p>Decide who or what lives in this world, how people communicate,
-        and what daily life looks like.</p>
-
-        <h3>3. Technology and Systems</h3>
-        <ul>
-            <li>Transport and communication.</li>
-            <li>Energy, food, and water.</li>
-            <li>Community spaces and important services.</li>
-        </ul>
-
-        <h3>4. Make It Interactive</h3>
-        <p>Begin with a simple map or a 2D scene. Add clickable locations,
-        information panels, and controls for exploring the environment.</p>
-
-        <p><em>This is a planning template, not a rendered or interactive
-        3D world.</em></p>
-    `;
-}
-
-/* ==========================================
-   INVENTION LAB MODE TEMPLATE
-========================================== */
-
-function makeInventionResult(idea) {
-    return `
-        <h3>⚡ Invention Development Blueprint</h3>
-
-        <p><strong>Your invention idea:</strong> ${escapeHTML(idea)}</p>
-
-        <h3>1. Define the Need</h3>
-        <p>Identify the problem the invention is intended to solve and
-        the people who might benefit.</p>
-
-        <h3>2. Propose a Solution</h3>
-        <p>Describe how your idea might work. Identify its main components
-        and what makes the approach worth investigating.</p>
-
-        <h3>3. Build a Safe Prototype</h3>
-        <ul>
-            <li>Sketch the design.</li>
-            <li>List the resources required.</li>
-            <li>Start with a low-cost digital model or a safe mock-up.</li>
-        </ul>
-
-        <h3>4. Test and Improve</h3>
-        <p>Establish what success means, test the prototype safely, and
-        record problems that need to be addressed.</p>
-
-        <h3>5. Check Feasibility</h3>
-        <p>Investigate cost, safety, accessibility, and whether a similar
-        solution already exists before committing to development.</p>
-    `;
-}
-
-/* ==========================================
-   RESULT BUILDERS
-========================================== */
-
-const resultBuilders = {
-    imagine: makeImagineResult,
-    intelligence: makeIntelligenceResult,
-    worlds: makeWorldResult,
-    invention: makeInventionResult
-};
-
-/* ==========================================
-   DEVELOP IDEA BUTTON
-========================================== */
-
 
 async function developIdea() {
-if (!ideaInput || !resultContent || !resultArea) {
-showToast("A required workspace element is missing.");
-return;
-}
-
-const idea = ideaInput.value.trim();
-
-if (!idea) {
-    showToast("Please describe your idea first.");
-    ideaInput.focus();
-    return;
-}
-
-const details = modeDetails[currentMode];
-const originalLabel = details.action;
-if (generateButton) {
-generateButton.addEventListener("click", developIdea);
-}
-resultArea.hidden = false;
-resultContent.textContent = "Connecting to MIRAGE AI...";
-
-try {
-    const response = await fetch("/.netlify/functions/ai", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            prompt: idea,
-            mode: currentMode
-        })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(
-            data.error || "The AI request failed. Please try again."
-        );
+    if (!ideaInput || !resultContent || !resultArea) {
+        showToast("A required workspace element is missing.");
+        return;
     }
 
-    if (!data.answer) {
-        throw new Error("MIRAGE received an empty answer.");
+    const idea = ideaInput.value.trim();
+
+    if (!idea) {
+        showToast("Please describe your idea first.");
+        ideaInput.focus();
+        return;
     }
 
-    const heading = document.createElement("h3");
-    heading.textContent = "✨ MIRAGE AI Response";
-
-    const answer = document.createElement("p");
-    answer.style.whiteSpace = "pre-wrap";
-    answer.textContent = data.answer;
-
-    resultContent.replaceChildren(heading, answer);
-
-    resultArea.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-    showToast("MIRAGE AI has responded!");
-
-} catch (error) {
-    console.error("MIRAGE AI error:", error);
-
-    resultContent.textContent =
-        "MIRAGE could not complete your request. " +
-        error.message +
-        " Please check your connection and try again.";
-
-    showToast("AI request failed. Check the result for details.");
-
-} finally {
-    if (generateButton) {
-        generateButton.disabled = false;
-        generateButton.textContent = originalLabel;
+    if (idea.length > 4000) {
+        showToast("Please keep your prompt under 4,000 characters.");
+        return;
     }
-}
 
-}
+    const details = modeDetails[currentMode];
+
+    if (!details) {
+        showToast("Please select a creation mode.");
+        return;
+    }
+
     if (generateButton) {
         generateButton.disabled = true;
-        generateButton.textContent = "Preparing Workspace...";
+        generateButton.textContent = "MIRAGE is thinking...";
     }
 
-    setTimeout(function () {
+    resultArea.hidden = false;
+    resultContent.textContent = "Connecting to MIRAGE AI...";
+
+    try {
+        /*
+         * The backend uses "world" for World Studio.
+         * The website uses "worlds" as its mode name.
+         */
+
+        const apiMode =
+            currentMode === "worlds" ? "world" : currentMode;
+
+        const response = await fetch("/.netlify/functions/ai", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                prompt: idea,
+                mode: apiMode
+            })
+        });
+
+        let data;
+
         try {
-            const builder = resultBuilders[currentMode];
-
-            if (!builder) {
-                showToast("Please select a creation mode.");
-                return;
-            }
-
-            resultContent.innerHTML = builder(idea);
-            resultArea.hidden = false;
-
-            resultArea.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-            showToast(
-                "Your starter blueprint is ready. This version uses templates, not AI."
+            data = await response.json();
+        } catch (parseError) {
+            throw new Error(
+                "The server returned an unreadable response. Please try again."
             );
-        } catch (error) {
-            console.error("Project MIRAGE generation error:", error);
-            showToast("Something went wrong. Please check the console.");
-        } finally {
-            if (generateButton) {
-                generateButton.disabled = false;
-                generateButton.textContent = originalLabel;
-            }
         }
-    }, 350);
+
+        if (!response.ok) {
+            throw new Error(
+                data.error ||
+                "The AI request failed. Please try again."
+            );
+        }
+
+        if (!data.answer) {
+            throw new Error(
+                "MIRAGE received an empty answer. Please try again."
+            );
+        }
+
+        /*
+         * Display the AI response as text rather than HTML.
+         * This prevents returned content from being treated as markup.
+         */
+
+        const heading = document.createElement("h3");
+        heading.textContent = "✨ MIRAGE AI Response";
+
+        const answer = document.createElement("p");
+        answer.textContent = data.answer;
+        answer.style.whiteSpace = "pre-wrap";
+        answer.style.overflowWrap = "anywhere";
+
+        resultContent.replaceChildren(heading, answer);
+
+        resultArea.hidden = false;
+
+        resultArea.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        showToast("MIRAGE AI has responded!");
+
+    } catch (error) {
+        console.error("MIRAGE AI error:", error);
+
+        resultContent.textContent =
+            "MIRAGE could not complete your request.\n\n" +
+            error.message +
+            "\n\nPlease check your internet connection and try again.";
+
+        showToast("AI request failed. Check the displayed message.");
+
+    } finally {
+        if (generateButton) {
+            generateButton.disabled = false;
+            generateButton.textContent = details.action;
+        }
+    }
 }
+
+/* ==========================================
+   CONNECT GENERATE BUTTON
+   IMPORTANT: This stays OUTSIDE the function.
+========================================== */
 
 if (generateButton) {
     generateButton.addEventListener("click", developIdea);
@@ -584,7 +431,7 @@ function setupVoiceRecognition() {
     if (!SpeechRecognition) {
         voiceButton.addEventListener("click", function () {
             showToast(
-                "Voice recognition is not supported here. Try a compatible browser or use your keyboard microphone."
+                "Voice recognition is not supported here. Try a compatible browser or your keyboard microphone."
             );
         });
 
@@ -655,6 +502,7 @@ if (copyButton && resultContent) {
         try {
             await navigator.clipboard.writeText(text);
             showToast("Result copied.");
+
         } catch (error) {
             const temporary = document.createElement("textarea");
 
@@ -694,4 +542,4 @@ if (generateButton) {
     generateButton.textContent = modeDetails.imagine.action;
 }
 
-console.log("PROJECT MIRAGE V1 loaded successfully.");
+console.log("PROJECT MIRAGE AI workspace loaded successfully.");
