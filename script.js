@@ -446,31 +446,90 @@ const resultBuilders = {
    DEVELOP IDEA BUTTON
 ========================================== */
 
-function developIdea() {
-    if (!ideaInput || !resultContent || !resultArea) {
-        showToast("A required workspace element is missing from index.html.");
-        return;
-    }
 
-    const idea = ideaInput.value.trim();
+async function developIdea() {
+if (!ideaInput || !resultContent || !resultArea) {
+showToast("A required workspace element is missing.");
+return;
+}
 
-    if (!idea && !selectedImage) {
-        showToast("Describe an idea or select an image first.");
-        ideaInput.focus();
-        return;
-    }
+const idea = ideaInput.value.trim();
 
-    if (!idea && selectedImage) {
-        showToast(
-            "Add a short description of your image. AI image understanding is not connected yet."
+if (!idea) {
+    showToast("Please describe your idea first.");
+    ideaInput.focus();
+    return;
+}
+
+const details = modeDetails[currentMode];
+const originalLabel = details.action;
+
+if (generateButton) {
+    generateButton.disabled = true;
+    generateButton.textContent = "MIRAGE is thinking...";
+}
+
+resultArea.hidden = false;
+resultContent.textContent = "Connecting to MIRAGE AI...";
+
+try {
+    const response = await fetch("/.netlify/functions/ai", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            prompt: idea,
+            mode: currentMode
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.error || "The AI request failed. Please try again."
         );
-
-        ideaInput.focus();
-        return;
     }
 
-    const originalLabel = modeDetails[currentMode].action;
+    if (!data.answer) {
+        throw new Error("MIRAGE received an empty answer.");
+    }
 
+    const heading = document.createElement("h3");
+    heading.textContent = "✨ MIRAGE AI Response";
+
+    const answer = document.createElement("p");
+    answer.style.whiteSpace = "pre-wrap";
+    answer.textContent = data.answer;
+
+    resultContent.replaceChildren(heading, answer);
+
+    resultArea.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    showToast("MIRAGE AI has responded!");
+
+} catch (error) {
+    console.error("MIRAGE AI error:", error);
+
+    resultContent.textContent =
+        "MIRAGE could not complete your request. " +
+        error.message +
+        " Please check your connection and try again.";
+
+    showToast("AI request failed. Check the result for details.");
+
+} finally {
+    if (generateButton) {
+        generateButton.disabled = false;
+        generateButton.textContent = originalLabel;
+    }
+}
+
+}
     if (generateButton) {
         generateButton.disabled = true;
         generateButton.textContent = "Preparing Workspace...";
